@@ -68,7 +68,7 @@ func main() {
 	for {
 		time.Sleep(1000 * time.Millisecond)
 
-		var buf []byte = make([]byte, 200)
+		var buf []byte = make([]byte, 500)
 
 		n, address, err := ln.ReadFromUDP(buf)
 
