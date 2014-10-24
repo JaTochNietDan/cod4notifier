@@ -28,7 +28,7 @@ var notify *notificator.Notificator
 
 func main() {
 	arrServers = append(arrServers, Server{
-		IP:         "192.168.1.24",
+		IP:         "192.168.1.26",
 		Hostname:   "Gangster Swag",
 		Map:        "mp_ambush",
 		MaxPlayers: 64,
@@ -36,7 +36,7 @@ func main() {
 	})
 
 	arrServers = append(arrServers, Server{
-		IP:         "192.168.1.99",
+		IP:         "192.168.1.111",
 		Hostname:   "John's Server",
 		Map:        "mp_district",
 		MaxPlayers: 16,
@@ -119,7 +119,7 @@ func main() {
 		}
 	}()
 
-	trayhost.EnterLoop("Call of Duty 4 Server Browser", []byte{0xff})
+	trayhost.EnterLoop("Call of Duty 4 Server Browser", IconData)
 }
 
 func handleServers(w http.ResponseWriter, req *http.Request) {

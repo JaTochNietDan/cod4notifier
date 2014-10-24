@@ -28,7 +28,7 @@
 						</thead>
 						<tbody>
 							<!-- ko foreach: servers -->
-								<tr data-bind="click: $parent.ShowServer">
+								<tr style="cursor: pointer;" data-bind="click: $parent.ShowServer">
 									<td data-bind="text: $data.IP"></td>
 									<td data-bind="text: $data.Hostname"></td>
 									<td data-bind="text: $data.MaxPlayers"></td>
@@ -63,7 +63,7 @@
 								<div class="col-sm-10">
 									<select class="form-control" data-bind="options: reloadEvery,
 										optionsText: 'Name',
-										value: 0">
+										value: selectedReload">
 									</select>
 								</div>
 							</div>
