@@ -1,14 +1,19 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
+	"net/http"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/0xAX/notificator"
+	"github.com/codegangsta/negroni"
+	"github.com/cratonica/trayhost"
 )
 
 var laddr *net.UDPAddr
@@ -17,10 +22,50 @@ var raddr *net.UDPAddr
 var con *net.UDPConn
 
 var servers = make(map[string]Server)
+var arrServers []Server
 
 var notify *notificator.Notificator
 
 func main() {
+	arrServers = append(arrServers, Server{
+		IP:         "192.168.1.24",
+		Hostname:   "Gangster Swag",
+		Map:        "mp_ambush",
+		MaxPlayers: 64,
+		GameType:   "Deathmatch",
+	})
+
+	arrServers = append(arrServers, Server{
+		IP:         "192.168.1.99",
+		Hostname:   "John's Server",
+		Map:        "mp_district",
+		MaxPlayers: 16,
+		GameType:   "Deathmatch",
+	})
+
+	arrServers = append(arrServers, Server{
+		IP:         "192.168.1.103",
+		Hostname:   "Teambork",
+		Map:        "mp_backlot",
+		MaxPlayers: 24,
+		GameType:   "Team Deathmatch",
+	})
+
+	// EnterLoop must be called on the OS's main thread
+	runtime.LockOSThread()
+
+	go func() {
+		trayhost.SetUrl("http://localhost:5050")
+
+		mux := http.NewServeMux()
+
+		mux.HandleFunc("/servers.json", handleServers)
+
+		n := negroni.Classic()
+		n.UseHandler(mux)
+		n.Run(":5050")
+	}()
+
 	addresses, _ := net.InterfaceAddrs()
 
 	currentAddr := addresses[0]
@@ -55,32 +100,36 @@ func main() {
 		return
 	}
 
-	fmt.Println("We're watching for Call of Duty 4 Servers on the local network")
-
 	go func() {
 		for {
 			time.Sleep(1000 * time.Millisecond)
 
-			askForServer()
+			var buf []byte = make([]byte, 500)
+
+			n, address, err := ln.ReadFromUDP(buf)
+
+			if err != nil {
+				fmt.Println("Error reading from connection:", err)
+				return
+			}
+
+			if address != nil && n > 0 {
+				parseMessage(address.String(), strings.TrimSpace(string(buf)))
+			}
 		}
 	}()
 
-	for {
-		time.Sleep(1000 * time.Millisecond)
+	trayhost.EnterLoop("Call of Duty 4 Server Browser", []byte{0xff})
+}
 
-		var buf []byte = make([]byte, 500)
+func handleServers(w http.ResponseWriter, req *http.Request) {
+	askForServer()
 
-		n, address, err := ln.ReadFromUDP(buf)
+	time.Sleep(1000 * time.Millisecond)
 
-		if err != nil {
-			fmt.Println("Error reading from connection:", err)
-			return
-		}
+	data, _ := json.Marshal(arrServers)
 
-		if address != nil && n > 0 {
-			parseMessage(strings.TrimSpace(string(buf)))
-		}
-	}
+	w.Write(data)
 }
 
 func askForServer() {
@@ -92,18 +141,18 @@ func askForServer() {
 	}
 }
 
-func parseMessage(msg string) {
+func parseMessage(ip string, msg string) {
 	// Ignore getInfo requests
 	if strings.Contains(msg, "getinfo xxx") {
 		return
 	}
 
 	if strings.Contains(msg, "infoResponse") {
-		parseServer(msg)
+		parseServer(ip, msg)
 	}
 }
 
-func parseServer(msg string) {
+func parseServer(ip string, msg string) {
 	split := strings.Split(msg, "\\")
 
 	server := Server{
@@ -112,6 +161,7 @@ func parseServer(msg string) {
 		GameType: split[12],
 	}
 
+	server.IP = ip
 	server.MaxPlayers, _ = strconv.ParseInt(split[10], 10, 64)
 	server.Pure = parseBool(split[14])
 	server.FriendlyFire = parseBool(split[16])
@@ -131,6 +181,7 @@ func parseServer(msg string) {
 }
 
 type Server struct {
+	IP           string
 	Hostname     string
 	Map          string
 	MaxPlayers   int64

@@ -1,0 +1,102 @@
+<html>
+	<head>
+		<title>Call of Duty 4 Server Browser</title>
+		<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/ladda.min.css">
+	</head>
+	<body>
+		<div class="container" style="margin-top: 20px;">
+			<div class="row">
+				<div class="col-lg-12">
+					<button id="btnRefresh" class="ladda-button" data-size="s" data-color="green" data-style="expand-right"><span class="ladda-label">Refresh List</span></button>
+					<button class="pull-right btn btn-primary btn-sm" data-toggle="modal" data-target="#modalSettings">
+				  		Show Settings
+					</button>
+				</div>
+			</div>
+			<div class="row" style="margin-top: 20px;">
+				<div class="col-lg-12">
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th>IP</th>
+								<th>Server Name</th>
+								<th>Players</th>
+								<th>Map</th>
+								<th>Mode</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- ko foreach: servers -->
+								<tr data-bind="click: $parent.ShowServer">
+									<td data-bind="text: $data.IP"></td>
+									<td data-bind="text: $data.Hostname"></td>
+									<td data-bind="text: $data.MaxPlayers"></td>
+									<td data-bind="text: $data.Map"></td>
+									<td data-bind="text: $data.GameType"></td>
+								</tr>
+							<!-- /ko -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="/js/jquery.min.js"></script>
+		<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/js/spin.min.js"></script>
+		<script type="text/javascript" src="/js/ladda.min.js"></script>
+		<script type="text/javascript" src="/js/ladda.jquery.min.js"></script>
+		<script type="text/javascript" src="/js/knockout.min.js"></script>
+		<script type="text/javascript" src="/js/knockout.mapping.min.js"></script>
+		<script type="text/javascript" src="/js/main.js"></script>
+		<div class="modal fade" id="modalSettings" role="dialog" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title">Edit Settings</h4>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal" role="form">
+							<div class="form-group">
+								<label for="inputReload" class="col-sm-2 control-label">Reload Every</label>
+								<div class="col-sm-10">
+									<select class="form-control" data-bind="options: reloadEvery,
+										optionsText: 'Name',
+										value: 0">
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-2 col-sm-10">
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" data-bind="checked: notifyMe"> Notify me when a new server appears
+										</label>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="modalServer" role="dialog" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title" data-bind="text: currentServer().Hostname"></h4>
+					</div>
+					<div class="modal-body">
+						<img style="width: 100%;" data-bind="attr: { src: '/images/maps/' + currentServer().Map + '.jpg' }" />
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Connect</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</head>
