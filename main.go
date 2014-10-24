@@ -27,30 +27,6 @@ var arrServers []Server
 var notify *notificator.Notificator
 
 func main() {
-	arrServers = append(arrServers, Server{
-		IP:         "192.168.1.26",
-		Hostname:   "Gangster Swag",
-		Map:        "mp_ambush",
-		MaxPlayers: 64,
-		GameType:   "Deathmatch",
-	})
-
-	arrServers = append(arrServers, Server{
-		IP:         "192.168.1.111",
-		Hostname:   "John's Server",
-		Map:        "mp_district",
-		MaxPlayers: 16,
-		GameType:   "Deathmatch",
-	})
-
-	arrServers = append(arrServers, Server{
-		IP:         "192.168.1.103",
-		Hostname:   "Teambork",
-		Map:        "mp_backlot",
-		MaxPlayers: 24,
-		GameType:   "Team Deathmatch",
-	})
-
 	// EnterLoop must be called on the OS's main thread
 	runtime.LockOSThread()
 
