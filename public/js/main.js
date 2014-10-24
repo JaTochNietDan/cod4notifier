@@ -59,12 +59,14 @@ $(document).ready(function() {
 		l.ladda('start');
 
 		$.getJSON('/servers.json', function(data) {
-			vm.servers(data);
+			if(data != null) {
+				vm.servers(data);
 
-			if(vm.notifyMe())
-				checkServers();
+				if(vm.notifyMe())
+					checkServers();
 
-			lastServers = data;
+				lastServers = data;
+			}
 
 			l.ladda('stop');
 
