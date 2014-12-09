@@ -29,7 +29,9 @@ var notify *notificator.Notificator
 func main() {
 	// EnterLoop must be called on the OS's main thread
 	runtime.LockOSThread()
-
+	
+        panic("fix")
+        
 	go func() {
 		trayhost.SetUrl("http://localhost:5050")
 
